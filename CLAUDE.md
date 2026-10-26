@@ -66,7 +66,7 @@ docs/rapor/        PDF'in kaynağı (HTML + görseller) ve çıktısı
 - Hata formatı tek tip: `{"error": {"code": "NOT_FOUND", "message": "...", "details": null}}` (422 dahil).
   Servisler `AppError` alt sınıfları fırlatır; global handler HTTP koduna çevirir. İstemciye ham `str(e)` / stack trace dönülmez.
 - Tarihler ISO 8601 UTC (`datetime.now(timezone.utc)`). Enum değerleri büyük harf string.
-- Sözleşme değişirse önce `docs/API_CONTRACT.md`, sonra kod (skill `api-contract-sync`).
+- Sözleşme değişirse önce `docs/API_CONTRACT.md`, sonra kod (süreç: `docs/BACKEND_GELISTIRME_REHBERI.md` §12).
 
 ## Güvenlik
 - `.env` okunmaz, commit edilmez, içeriği yazdırılmaz. Ayarlar `.env.example` üzerinden belgelenir.

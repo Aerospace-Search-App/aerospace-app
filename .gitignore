@@ -9,4 +9,5 @@ dev.db
 
 # Kişisel / lokal dosyalar (repoya girmez)
 docs/OGRENME_NOTLARI.md
-.claude/agents/manager.md
+.claude/agents/
+.claude/skills/
