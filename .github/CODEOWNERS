@@ -1,0 +1,13 @@
+# Hassas dosyalar: bu dosyalara dokunan PR'larda 2 onaydan en az biri aşağıdaki sahiplerden olmalı.
+# Yeni ekip üyesi repoya eklendiğinde (yazma yetkisiyle) kullanıcı adını her satıra ekleyin.
+# Ayrıntı: docs/BACKEND_GELISTIRME_REHBERI.md §11
+
+/docs/API_CONTRACT.md                    @Kaganbayrak @SudenurKececi @emekcidoruk
+/tests/api/test_contract_coverage.py     @Kaganbayrak @SudenurKececi @emekcidoruk
+/src/domain/interfaces.py                @Kaganbayrak @SudenurKececi @emekcidoruk
+/requirements.txt                        @Kaganbayrak @SudenurKececi @emekcidoruk
+/.github/                                @Kaganbayrak @SudenurKececi @emekcidoruk
+/docs/BACKEND_GELISTIRME_REHBERI.md      @Kaganbayrak @SudenurKececi @emekcidoruk
+/AGENTS.md                               @Kaganbayrak @SudenurKececi @emekcidoruk
+/CLAUDE.md                               @Kaganbayrak @SudenurKececi @emekcidoruk
+/.claude/                                @Kaganbayrak @SudenurKececi @emekcidoruk
