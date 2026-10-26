@@ -1,0 +1,41 @@
+name: aerostd
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: aerostd
+      POSTGRES_PASSWORD: aerostd
+      POSTGRES_DB: aerostd
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aerostd -d aerostd"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql://aerostd:aerostd@db:5432/aerostd
+    ports:
+      - "8000:8000"
+    volumes:
+      - standards:/app/data/standards
+      - downloads:/app/data/downloads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  standards:
+  downloads:
