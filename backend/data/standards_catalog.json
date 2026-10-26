@@ -1,0 +1,177 @@
+[
+  {
+    "code": "AC 20-115D",
+    "title": "Airborne Software Development Assurance Using EUROCAE ED-12( ) and RTCA DO-178( )",
+    "issuer": "FAA",
+    "category": "civil",
+    "domains": [
+      "software",
+      "airworthiness"
+    ],
+    "language": "en",
+    "version": "D",
+    "published_on": "2017-07-21",
+    "url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_20-115D.pdf"
+  },
+  {
+    "code": "AC 20-152A",
+    "title": "Development Assurance for Airborne Electronic Hardware",
+    "issuer": "FAA",
+    "category": "civil",
+    "domains": [
+      "hardware",
+      "airworthiness"
+    ],
+    "language": "en",
+    "version": "A",
+    "published_on": "2022-10-07",
+    "url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_20-152A.pdf"
+  },
+  {
+    "code": "AC 20-174",
+    "title": "Development of Civil Aircraft and Systems",
+    "issuer": "FAA",
+    "category": "civil",
+    "domains": [
+      "systems",
+      "safety"
+    ],
+    "language": "en",
+    "version": "",
+    "published_on": "2011-09-30",
+    "url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_20-174.pdf"
+  },
+  {
+    "code": "AC 25.1309-1B",
+    "title": "System Design and Analysis",
+    "issuer": "FAA",
+    "category": "civil",
+    "domains": [
+      "safety",
+      "systems",
+      "airworthiness"
+    ],
+    "language": "en",
+    "version": "B",
+    "published_on": "2024",
+    "url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_25.1309-1B.pdf"
+  },
+  {
+    "code": "AC 23.1309-1E",
+    "title": "System Safety Analysis and Assessment for Part 23 Airplanes",
+    "issuer": "FAA",
+    "category": "civil",
+    "domains": [
+      "safety",
+      "systems"
+    ],
+    "language": "en",
+    "version": "E",
+    "published_on": "2011-11-17",
+    "url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_23.1309-1E.pdf"
+  },
+  {
+    "code": "AC 120-92B",
+    "title": "Safety Management Systems for Aviation Service Providers",
+    "issuer": "FAA",
+    "category": "civil",
+    "domains": [
+      "sms",
+      "safety"
+    ],
+    "language": "en",
+    "version": "B",
+    "published_on": "2015-01-08",
+    "url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_120-92B.pdf"
+  },
+  {
+    "code": "SHT-145",
+    "title": "Onaylı Hava Aracı Bakım Kuruluşları Talimatı",
+    "issuer": "SHGM",
+    "category": "civil",
+    "domains": [
+      "maintenance",
+      "airworthiness"
+    ],
+    "language": "tr",
+    "version": "Rev.02",
+    "published_on": "2018-04-16",
+    "url": "https://web.shgm.gov.tr/documents/sivilhavacilik/files/mevzuat/sektorel/talimatlar/2018/SHT-145.pdf"
+  },
+  {
+    "code": "SHT-17.3",
+    "title": "Havacılık İşletmeleri Güvenlik Yönetimi ve Organizasyonu Talimatı",
+    "issuer": "SHGM",
+    "category": "civil",
+    "domains": [
+      "sms",
+      "safety"
+    ],
+    "language": "tr",
+    "version": "",
+    "published_on": "",
+    "url": "https://web.shgm.gov.tr/documents/sivilhavacilik/files/mevzuat/sektorel/talimatlar/SHT_17.3.pdf"
+  },
+  {
+    "code": "MIL-STD-882E",
+    "title": "Department of Defense Standard Practice: System Safety",
+    "issuer": "DoD",
+    "category": "defense",
+    "domains": [
+      "safety",
+      "systems"
+    ],
+    "language": "en",
+    "version": "E",
+    "published_on": "2012-05-11",
+    "url": "https://everyspec.com/MIL-STD/MIL-STD-0800-0899/download.php?spec=MIL-STD-882E.041682.pdf",
+    "page_url": "https://everyspec.com/MIL-STD/MIL-STD-0800-0899/MIL-STD-882E_41682/"
+  },
+  {
+    "code": "MIL-STD-461G",
+    "title": "Requirements for the Control of Electromagnetic Interference Characteristics of Subsystems and Equipment",
+    "issuer": "DoD",
+    "category": "defense",
+    "domains": [
+      "emc",
+      "hardware"
+    ],
+    "language": "en",
+    "version": "G",
+    "published_on": "2015-12-11",
+    "url": "https://everyspec.com/MIL-STD/MIL-STD-0300-0499/download.php?spec=MIL-STD-461G.053915.pdf",
+    "page_url": "https://everyspec.com/MIL-STD/MIL-STD-0300-0499/MIL-STD-461G_53571/"
+  },
+  {
+    "code": "MIL-STD-810H",
+    "title": "Environmental Engineering Considerations and Laboratory Tests",
+    "issuer": "DoD",
+    "category": "defense",
+    "domains": [
+      "environmental",
+      "hardware"
+    ],
+    "language": "en",
+    "version": "H",
+    "published_on": "2019-01-31",
+    "optional": true,
+    "note": "~62 MB, 1000+ sayfa: indeksleme uzun sürer. --all ile indirilir.",
+    "page_url": "https://everyspec.com/MIL-STD/MIL-STD-0800-0899/MIL-STD-810H_55998/"
+  },
+  {
+    "code": "MIL-HDBK-516C",
+    "title": "Airworthiness Certification Criteria",
+    "issuer": "DoD",
+    "category": "defense",
+    "domains": [
+      "airworthiness",
+      "safety",
+      "software",
+      "systems"
+    ],
+    "language": "en",
+    "version": "C",
+    "published_on": "2014-12-12",
+    "page_url": "https://everyspec.com/MIL-HDBK/MIL-HDBK-0500-0599/MIL-HDBK-516C_52120/"
+  }
+]

@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AeroStandart — Yönetim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --primary: #C8102E; --primary-d: #870C2B; --primary-soft: #FDECEF;
+    --ink: #0F172A; --muted: #64748B; --subtle: #94A3B8;
+    --canvas: #F8FAFC; --surface: #FFFFFF; --alt: #F1F5F9; --border: #E2E8F0;
+    --ok: #16A34A; --ok-soft: #ECFDF3; --warn: #D97706; --warn-soft: #FFF7E6; --info: #0C8CE9; --info-soft: #EAF5FE;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--canvas); color: var(--ink); font-size: 14px; }
+  button, input, select { font: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 64px; }
+  header.top { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+  .logo { width: 40px; height: 40px; border-radius: 12px; background: var(--primary); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 20px; position: relative; }
+  .logo::after { content: ""; position: absolute; width: 4px; height: 4px; border-radius: 2px; background: #fff; bottom: 7px; }
+  .eyebrow { color: var(--primary); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  h1 { font-size: 22px; margin: 2px 0 0; letter-spacing: -.01em; }
+  h2 { font-size: 16px; margin: 0 0 14px; }
+  .spacer { flex: 1; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .grid { display: grid; gap: 16px; }
+  .stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 16px; }
+  .stat .v { font-size: 26px; font-weight: 700; margin-top: 4px; }
+  .stat .l { color: var(--muted); font-size: 12px; font-weight: 500; }
+  .main { grid-template-columns: 360px 1fr; align-items: start; }
+  @media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin: 12px 0 6px; }
+  input[type=text], input[type=email], input[type=password], select {
+    width: 100%; height: 42px; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; background: #fff; color: var(--ink); outline: none;
+  }
+  input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(200,16,46,.12); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .btn { height: 42px; padding: 0 16px; border-radius: 10px; border: 1px solid transparent; background: var(--primary); color: #fff; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn:hover { background: var(--primary-d); }
+  .btn:disabled { background: var(--border); color: var(--subtle); cursor: not-allowed; }
+  .btn.sec { background: #fff; color: var(--ink); border-color: var(--border); }
+  .btn.sec:hover { background: var(--alt); }
+  .btn.soft { background: var(--primary-soft); color: var(--primary); }
+  .btn.sm { white-space: nowrap; height: 32px; padding: 0 10px; font-size: 12px; border-radius: 8px; }
+  .btn.full { width: 100%; margin-top: 16px; }
+  .drop { border: 1.5px dashed var(--border); border-radius: 12px; padding: 18px; text-align: center; color: var(--muted); cursor: pointer; background: var(--canvas); }
+  .drop.over, .drop:hover { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+  .drop b { color: var(--ink); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--border); border-radius: 999px; padding: 5px 10px; font-size: 12px; cursor: pointer; user-select: none; background: #fff; }
+  .chip.on { background: var(--primary-soft); color: var(--primary); border-color: var(--primary); }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  .code { display: inline-block; background: var(--ink); color: #fff; font-weight: 600; font-size: 11px; border-radius: 6px; padding: 3px 7px; }
+  .title { font-weight: 500; margin-top: 6px; }
+  .small { font-size: 12px; color: var(--muted); }
+  .badge { white-space: nowrap; display: inline-block; font-size: 11px; font-weight: 600; border-radius: 999px; padding: 3px 9px; }
+  .b-ready { background: var(--ok-soft); color: var(--ok); }
+  .b-lexical_only { background: var(--info-soft); color: var(--info); }
+  .b-embedding, .b-parsing, .b-queued { background: var(--warn-soft); color: var(--warn); }
+  .b-failed { background: var(--primary-soft); color: var(--primary); }
+  .bar { height: 5px; background: var(--alt); border-radius: 3px; overflow: hidden; margin-top: 6px; width: 120px; }
+  .bar > i { display: block; height: 100%; background: var(--warn); }
+  .actions { display: flex; gap: 6px; justify-content: flex-end; }
+  .msg { margin-top: 12px; padding: 10px 12px; border-radius: 10px; font-size: 13px; display: none; }
+  .msg.err { display: block; background: var(--primary-soft); color: var(--primary-d); }
+  .msg.ok { display: block; background: var(--ok-soft); color: var(--ok); }
+  .login { max-width: 400px; margin: 8vh auto; }
+  .hidden { display: none !important; }
+  .note { background: var(--warn-soft); color: #92400E; border-radius: 10px; padding: 10px 12px; font-size: 12px; margin-bottom: 16px; }
+  .hit { border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 10px; padding: 10px 12px; margin-top: 10px; }
+  .muted-link { color: var(--primary); text-decoration: none; font-weight: 600; }
+  .tablewrap { overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">A</div>
+    <div>
+      <div class="eyebrow">AeroStandart AI · Yönetim</div>
+      <h1>Standart yönetim paneli</h1>
+    </div>
+    <div class="spacer"></div>
+    <a class="btn sec sm" href="/docs" target="_blank">Swagger API</a>
+    <button id="logoutBtn" class="btn soft sm hidden">Çıkış yap</button>
+  </header>
+
+  <!-- Giriş -->
+  <section id="loginView" class="card login hidden">
+    <div class="eyebrow">Yönetici girişi</div>
+    <h2 style="margin-top:6px">Tekrar hoş geldiniz</h2>
+    <form id="loginForm">
+      <label for="lEmail">E-posta veya kullanıcı adı</label>
+      <input id="lEmail" type="text" autocomplete="username" required />
+      <label for="lPass">Şifre</label>
+      <input id="lPass" type="password" autocomplete="current-password" required />
+      <button class="btn full" type="submit">Giriş yap</button>
+      <div id="loginMsg" class="msg"></div>
+    </form>
+  </section>
+
+  <!-- Panel -->
+  <section id="appView" class="hidden">
+    <div id="llmNote" class="note hidden">
+      <b>GEMINI_API_KEY tanımlı değil.</b> Dokümanlar yalnızca tam metin aramayla indekslenir ve cevaplar alıntı modunda üretilir.
+      Anahtarı <code>.env</code> dosyasına ekleyip API'yi yeniden başlatınca anlamsal indeks otomatik tamamlanır.
+    </div>
+    <div class="grid stats" id="stats"></div>
+
+    <div class="grid main">
+      <div class="grid">
+        <div class="card">
+          <h2>PDF yükle</h2>
+          <form id="upForm">
+            <div id="drop" class="drop"><b>PDF seç</b> veya buraya sürükle<br /><span class="small" id="fileName">En fazla 150 MB</span></div>
+            <input id="file" type="file" accept="application/pdf,.pdf" class="hidden" />
+            <div class="row2">
+              <div><label for="code">Kod</label><input id="code" type="text" placeholder="MIL-STD-882E" required /></div>
+              <div><label for="issuer">Yayımlayan</label><input id="issuer" type="text" placeholder="FAA, SHGM, DoD…" /></div>
+            </div>
+            <label for="title">Başlık</label>
+            <input id="title" type="text" placeholder="System Safety" required />
+            <div class="row2">
+              <div><label for="category">Kategori</label>
+                <select id="category"><option value="civil">Sivil havacılık</option><option value="defense">Savunma</option></select></div>
+              <div><label for="language">Dil</label>
+                <select id="language"><option value="en">İngilizce</option><option value="tr">Türkçe</option></select></div>
+            </div>
+            <div class="row2">
+              <div><label for="version">Sürüm</label><input id="version" type="text" placeholder="Rev. E" /></div>
+              <div><label for="published">Yayın tarihi</label><input id="published" type="text" placeholder="2012-05-11" /></div>
+            </div>
+            <label>Alanlar</label>
+            <div class="chips" id="domains"></div>
+            <button id="upBtn" class="btn full" type="submit">Yükle ve indeksle</button>
+            <div id="upMsg" class="msg"></div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Arama testi</h2>
+          <form id="searchForm" style="display:flex; gap:8px">
+            <input id="sq" type="text" placeholder="ör. hazard severity categories" />
+            <button class="btn" type="submit">Ara</button>
+          </form>
+          <div id="searchOut" class="small" style="margin-top:6px"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px">
+          <h2 style="margin:0">Dokümanlar</h2>
+          <span class="small" id="workerState"></span>
+          <div class="spacer"></div>
+          <button class="btn sec sm" id="refreshBtn">Yenile</button>
+        </div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Standart</th><th>Durum</th><th>Sayfa / madde</th><th></th></tr></thead>
+            <tbody id="docs"><tr><td colspan="4" class="small">Yükleniyor…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const STATUS = { ready: 'Hibrit hazır', lexical_only: 'Tam metin', embedding: 'İndeksleniyor', parsing: 'Ayrıştırılıyor', queued: 'Sırada', failed: 'Hata' };
+let token = localStorage.getItem('aerostd.admin') || '';
+let timer = null;
+let selectedDomains = new Set();
+
+async function api(path, opts = {}) {
+  const res = await fetch(path, { ...opts, headers: { ...(opts.headers || {}), ...(token ? { Authorization: 'Bearer ' + token } : {}) } });
+  if (res.status === 401) { logout(); throw new Error('Oturum süresi doldu'); }
+  if (res.status === 204) return null;
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.detail || ('Hata ' + res.status));
+  return data;
+}
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function show(el, text, ok) { el.textContent = text; el.className = 'msg ' + (ok ? 'ok' : 'err'); }
+
+function logout() { token = ''; localStorage.removeItem('aerostd.admin'); clearInterval(timer); render(); }
+$('#logoutBtn').onclick = logout;
+
+$('#loginForm').onsubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const r = await api('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: $('#lEmail').value, password: $('#lPass').value }) });
+    if (r.user.role !== 'admin') throw new Error('Bu hesap yönetici değil');
+    token = r.access_token; localStorage.setItem('aerostd.admin', token); render();
+  } catch (err) { show($('#loginMsg'), err.message); }
+};
+
+async function render() {
+  const logged = !!token;
+  $('#loginView').classList.toggle('hidden', logged);
+  $('#appView').classList.toggle('hidden', !logged);
+  $('#logoutBtn').classList.toggle('hidden', !logged);
+  if (!logged) return;
+  try {
+    const me = await api('/api/auth/me');
+    if (me.role !== 'admin') return logout();
+  } catch { return; }
+  loadDomains(); refresh();
+  clearInterval(timer); timer = setInterval(refresh, 4000);
+}
+
+async function loadDomains() {
+  const ds = await api('/api/meta/domains');
+  $('#domains').innerHTML = ds.map((d) => `<span class="chip" data-k="${d.key}" title="${esc(d.hint)}">${esc(d.label)}</span>`).join('');
+  $('#domains').querySelectorAll('.chip').forEach((c) => c.onclick = () => {
+    const k = c.dataset.k; selectedDomains.has(k) ? selectedDomains.delete(k) : selectedDomains.add(k); c.classList.toggle('on');
+  });
+}
+
+async function refresh() {
+  try {
+    const [stats, docs] = await Promise.all([api('/api/admin/stats'), api('/api/admin/documents')]);
+    $('#llmNote').classList.toggle('hidden', stats.llm_enabled);
+    const items = [['Standart', stats.documents], ['Madde parçası', stats.chunks], ['Vektör (embedding)', stats.embedded],
+      ['Kullanıcı', stats.users], ['Sohbet', stats.conversations], ['Soru', stats.questions]];
+    $('#stats').innerHTML = items.map(([l, v]) => `<div class="card stat"><div class="l">${l}</div><div class="v">${Number(v).toLocaleString('tr-TR')}</div></div>`).join('');
+    $('#workerState').textContent = stats.worker_busy ? '· işleniyor…' : '';
+    $('#docs').innerHTML = docs.length ? docs.map(row).join('') : '<tr><td colspan="4" class="small">Henüz doküman yok. Soldan PDF yükleyin; veritabanı boşsa kamuya açık standartlar otomatik indirilir.</td></tr>';
+    document.querySelectorAll('[data-act]').forEach((b) => b.onclick = () => act(b.dataset.act, b.dataset.id, b.dataset.code));
+  } catch (e) { /* sessiz */ }
+}
+
+function row(d) {
+  const pct = d.chunk_count ? Math.round(100 * d.embedded_count / d.chunk_count) : 0;
+  const progress = d.status === 'embedding' ? `<div class="bar"><i style="width:${pct}%"></i></div><div class="small">${d.embedded_count}/${d.chunk_count}</div>` : '';
+  return `<tr>
+    <td><span class="code">${esc(d.code)}</span> <span class="small">${esc(d.issuer)} · ${d.category === 'defense' ? 'Savunma' : 'Sivil'} · ${d.language.toUpperCase()}</span>
+        <div class="title">${esc(d.title)}</div>${d.error ? `<div class="small" style="color:var(--primary)">${esc(d.error)}</div>` : ''}</td>
+    <td><span class="badge b-${d.status}">${STATUS[d.status] || d.status}</span>${progress}</td>
+    <td class="small">${d.page_count} / ${d.chunk_count}</td>
+    <td><div class="actions">
+      <button class="btn sec sm" data-act="reprocess" data-id="${d.id}">Yeniden indeksle</button>
+      <button class="btn soft sm" data-act="delete" data-id="${d.id}" data-code="${esc(d.code)}">Sil</button>
+    </div></td></tr>`;
+}
+
+async function act(kind, id, code) {
+  try {
+    if (kind === 'delete') {
+      if (!confirm(code + ' silinsin mi? Bu işlem geri alınamaz.')) return;
+      await api('/api/admin/documents/' + id, { method: 'DELETE' });
+    } else {
+      await api('/api/admin/documents/' + id + '/reprocess', { method: 'POST' });
+    }
+    refresh();
+  } catch (e) { alert(e.message); }
+}
+
+// Dosya seçimi / sürükle-bırak
+const drop = $('#drop'), fileInput = $('#file');
+drop.onclick = () => fileInput.click();
+drop.ondragover = (e) => { e.preventDefault(); drop.classList.add('over'); };
+drop.ondragleave = () => drop.classList.remove('over');
+drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) { fileInput.files = e.dataTransfer.files; onFile(); } };
+fileInput.onchange = onFile;
+function onFile() {
+  const f = fileInput.files[0]; if (!f) return;
+  $('#fileName').textContent = `${f.name} · ${(f.size / 1e6).toFixed(1)} MB`;
+  if (!$('#code').value) $('#code').value = f.name.replace(/\.pdf$/i, '').replace(/_/g, ' ');
+}
+
+$('#upForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const f = fileInput.files[0];
+  if (!f) return show($('#upMsg'), 'Önce bir PDF seçin');
+  const fd = new FormData();
+  fd.append('file', f);
+  fd.append('code', $('#code').value.trim());
+  fd.append('title', $('#title').value.trim());
+  fd.append('issuer', $('#issuer').value.trim());
+  fd.append('category', $('#category').value);
+  fd.append('language', $('#language').value);
+  fd.append('version', $('#version').value.trim());
+  fd.append('published_on', $('#published').value.trim());
+  fd.append('domains', [...selectedDomains].join(','));
+  $('#upBtn').disabled = true; $('#upBtn').textContent = 'Yükleniyor…';
+  try {
+    const d = await api('/api/admin/documents', { method: 'POST', body: fd });
+    show($('#upMsg'), `${d.code} yüklendi; madde bazlı ayrıştırma başladı.`, true);
+    $('#upForm').reset(); fileInput.value = ''; $('#fileName').textContent = 'En fazla 150 MB';
+    selectedDomains.clear(); document.querySelectorAll('#domains .chip').forEach((c) => c.classList.remove('on'));
+    refresh();
+  } catch (err) { show($('#upMsg'), err.message); }
+  finally { $('#upBtn').disabled = false; $('#upBtn').textContent = 'Yükle ve indeksle'; }
+};
+
+$('#searchForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const q = $('#sq').value.trim(); if (q.length < 2) return;
+  $('#searchOut').textContent = 'Aranıyor…';
+  try {
+    const r = await api('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: q, k: 5 }) });
+    $('#searchOut').innerHTML = `<div>Mod: <b>${r.mode === 'hybrid' ? 'Hibrit (vektör + tam metin)' : 'Tam metin'}</b></div>` + (r.hits.length ? r.hits.map((h) => `
+      <div class="hit"><span class="code">${esc(h.code)}</span> <b>${esc(h.clause_ref)}</b> ${esc(h.heading)} <span class="small">· s.${h.page_start} · skor ${h.score}
+      ${h.lexical_rank ? '· TM#' + h.lexical_rank : ''} ${h.vector_rank ? '· V#' + h.vector_rank : ''}</span>
+      <div class="small" style="margin-top:4px">${esc(h.snippet)}</div></div>`).join('') : '<div style="margin-top:8px">Sonuç yok.</div>');
+  } catch (err) { $('#searchOut').textContent = err.message; }
+};
+
+render();
+</script>
+</body>
+</html>
