@@ -10,7 +10,7 @@
 **API İskeleti (Swagger)**
 Aerospace Compliance Platform · Mobil Uygulama Arka Ucu
 
-Hazırlayan: **Kağan Bayrak** — API iskeleti sorumlusu
+Hazırlayan: **Kağan Bayrak**
 Ders: Mobil Uygulamalar · Ekip projesi
 Tarih: 27 Ekim 2026
 
