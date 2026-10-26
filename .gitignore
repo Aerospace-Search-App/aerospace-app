@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+/storage/
+dev.db
+.claude/settings.local.json
+
+# Kişisel / lokal dosyalar (repoya girmez)
+docs/OGRENME_NOTLARI.md
+.claude/agents/manager.md

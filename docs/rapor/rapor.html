@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>API İskeleti (Swagger) · Kağan Bayrak</title>
+<!-- Kaynak metin: docs/rapor/RAPOR_METNI.md · PDF: tools/build_pdf.py -->
+<style>
+  @page {
+    size: A4;
+    margin: 15mm 15mm 16mm 15mm;
+    @bottom-left { content: "API İskeleti · Kağan Bayrak"; font: 7.5pt "Segoe UI", Calibri, Arial, sans-serif; color: #6B7280; }
+    @bottom-center { content: counter(page); font: 600 8.5pt "Segoe UI", Calibri, Arial, sans-serif; color: #0F2A4A; }
+  }
+  @page :first {
+    margin: 0;
+    @bottom-left { content: none; }
+    @bottom-center { content: none; }
+  }
+
+  :root {
+    --navy: #0F2A4A; --teal: #0EA5A4; --bg: #F3F7FA; --text: #1F2937; --muted: #6B7280;
+    --line: #E5E7EB; --amber: #D97706; --get: #16A34A; --post: #2563EB;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "Segoe UI Variable", Calibri, Arial, sans-serif;
+    font-size: 9.8pt; line-height: 1.42; color: var(--text);
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  p { margin: 0 0 6pt; }
+  ul { margin: 0 0 6pt; padding-left: 15pt; }
+  li { margin-bottom: 2pt; }
+  strong { color: #111827; }
+  code, .mono { font-family: Consolas, "Cascadia Mono", monospace; font-size: 9pt; }
+  p code, li code, td code, .box code {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 3px; padding: 0 3px; color: var(--navy);
+  }
+  .page-break { break-before: page; }
+
+  /* ---------- Kapak ---------- */
+  .cover { height: 297mm; padding: 0 20mm 22mm; position: relative; display: flex; flex-direction: column; break-after: page; }
+  .cover .strip { height: 7mm; background: var(--teal); margin: 0 -20mm; }
+  .cover .strip2 { height: 1.6mm; background: var(--navy); margin: 0 -20mm 40mm; }
+  .cover .kicker { font-size: 10pt; letter-spacing: 2pt; text-transform: uppercase; color: var(--teal); font-weight: 700; }
+  .cover h1 { font-size: 34pt; line-height: 1.12; color: var(--navy); margin: 6pt 0 6pt; font-weight: 700; }
+  .cover .subtitle { font-size: 14pt; color: var(--muted); margin-bottom: 18pt; }
+  .cover .meta { border-left: 4px solid var(--teal); padding: 4pt 0 4pt 12pt; font-size: 10.5pt; margin-bottom: 30pt; }
+  .cover .meta div { margin: 2pt 0; }
+  .cover .meta .label { color: var(--muted); display: inline-block; width: 70pt; }
+  .cards { display: grid; gap: 10pt; margin: 0 0 18pt; }
+  .cover .cards { margin-bottom: 28pt; }
+  .cards.four { grid-template-columns: repeat(4, 1fr); }
+  .cards.three { grid-template-columns: repeat(3, 1fr); }
+  .card { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12pt 12pt 10pt; border-top: 3px solid var(--teal); }
+  .card .num { font-size: 26pt; font-weight: 700; line-height: 1; color: var(--navy); }
+  .card .num em { font-style: normal; color: var(--teal); }
+  .card .lbl { font-size: 9pt; color: var(--muted); margin-top: 6pt; line-height: 1.3; }
+  .cover .summary { font-size: 11.5pt; line-height: 1.55; margin-bottom: 22pt; }
+  .toc { margin-top: auto; background: var(--bg); border-radius: 8px; padding: 14pt 16pt; }
+  .toc h3 { margin: 0 0 8pt; font-size: 10pt; letter-spacing: 1.5pt; text-transform: uppercase; color: var(--navy); }
+  .toc ol { columns: 2; column-gap: 24pt; margin: 0; padding: 0; list-style: none; counter-reset: toc; }
+  .toc li { counter-increment: toc; padding: 3pt 0; border-bottom: 1px solid var(--line); break-inside: avoid; font-size: 10pt; }
+  .toc li::before { content: counter(toc, decimal-leading-zero); color: var(--teal); font-weight: 700; display: inline-block; width: 22pt; }
+  .toc li.extra { counter-increment: none; }
+  .toc li.extra::before { content: "Ek"; }
+
+  /* ---------- Bölüm başlıkları ---------- */
+  h2 {
+    display: flex; align-items: baseline; gap: 10pt; margin: 14pt 0 8pt; padding-bottom: 4pt;
+    border-bottom: 1.5px solid var(--line); color: var(--navy); font-size: 16pt; line-height: 1.2; break-after: avoid;
+  }
+  h2 .n { color: var(--teal); font-size: 20pt; font-weight: 700; min-width: 30pt; }
+  h2:first-child, .page-break > h2:first-child { margin-top: 0; }
+  h3 { color: var(--navy); font-size: 11.5pt; margin: 10pt 0 4pt; break-after: avoid; }
+  h3 .n { color: var(--teal); margin-right: 6pt; }
+  h4 { color: var(--navy); font-size: 10pt; margin: 8pt 0 4pt; break-after: avoid; }
+
+  /* ---------- Tablolar ---------- */
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0; margin: 3pt 0 9pt; font-size: 9pt; line-height: 1.35;
+    border: 1px solid var(--line); border-radius: 6px; overflow: hidden; break-inside: avoid;
+  }
+  th { background: var(--navy); color: #fff; text-align: left; font-weight: 600; padding: 4pt 7pt; }
+  td { padding: 3.2pt 7pt; border-top: 1px solid var(--line); vertical-align: top; }
+  tr { break-inside: avoid; }
+  tbody tr:nth-child(even) td { background: #F9FAFB; }
+  td.c, th.c { text-align: center; }
+  .group-title { display: flex; align-items: center; gap: 8pt; margin: 10pt 0 3pt; font-weight: 700; color: var(--navy); font-size: 10pt; break-after: avoid; }
+  .group-title small { font-weight: 400; color: var(--muted); }
+  table.ep td:first-child { width: 52pt; }
+  table.ep td:nth-child(2) { width: 46%; }
+  table.ep tr.grp { break-after: avoid; page-break-after: avoid; }
+  table.ep tr.grp td { background: #E6F6F6 !important; color: var(--navy); font-weight: 700; padding: 3pt 7pt; border-top: 1.5px solid #B8E3E2; }
+  table.ep tr.grp td small { font-weight: 400; color: var(--muted); }
+  table.ep tbody tr:nth-child(even) td { background: transparent; }
+  table.ep { break-inside: auto; }
+  table.ep code { background: none; border: 0; padding: 0; font-size: 8.8pt; color: var(--navy); }
+  .m { display: inline-block; min-width: 38pt; text-align: center; color: #fff; font-weight: 700; font-size: 7.5pt;
+       border-radius: 4px; padding: 1.5pt 0; letter-spacing: .5pt; font-family: "Segoe UI", Arial, sans-serif; }
+  .m.get { background: var(--get); } .m.post { background: var(--post); }
+
+  /* ---------- Kutular ---------- */
+  .box { background: var(--bg); border-left: 4px solid var(--navy); border-radius: 0 6px 6px 0; padding: 6pt 11pt; margin: 6pt 0 9pt; break-inside: avoid; }
+  .box .tag { display: block; font-size: 8pt; font-weight: 700; letter-spacing: 1pt; text-transform: uppercase; margin-bottom: 3pt; color: var(--navy); }
+  .box p:last-child { margin-bottom: 0; }
+  .box.teal { border-left-color: var(--teal); } .box.teal .tag { color: var(--teal); }
+  .box.amber { border-left-color: var(--amber); background: #FFFBEB; } .box.amber .tag { color: var(--amber); }
+
+  pre.code { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 7pt 10pt; font-size: 8.8pt; margin: 4pt 0 10pt; white-space: pre-wrap; }
+
+  /* ---------- Diyagram 1: katmanlar ---------- */
+  .layers { display: grid; grid-template-columns: 1fr 120pt; gap: 12pt; margin: 6pt 0 10pt; break-inside: avoid; }
+  .stack { display: flex; flex-direction: column; align-items: stretch; }
+  .layer { display: grid; grid-template-columns: 92pt 1fr; align-items: center; border: 1px solid var(--line); border-radius: 7px; background: #fff; overflow: hidden; }
+  .layer .name { background: var(--navy); color: #fff; font-weight: 700; padding: 7pt 9pt; height: 100%; display: flex; flex-direction: column; justify-content: center; font-size: 10pt; }
+  .layer .name code { background: none; border: 0; color: #9FE3E2; font-size: 7.3pt; padding: 0; margin-top: 2pt; }
+  .layer .desc { padding: 6pt 10pt; font-size: 9pt; line-height: 1.4; }
+  .layer.core-domain .name { background: var(--teal); }
+  .layer.core-domain { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(14,165,164,.15); }
+  .arrow { text-align: center; color: var(--teal); font-size: 8pt; line-height: 1; padding: 2pt 0; font-weight: 600; }
+  .arrow b { display: block; font-size: 12pt; line-height: .9; }
+  .side { border: 1.5px dashed var(--navy); border-radius: 8px; padding: 9pt; background: var(--bg); display: flex; flex-direction: column; justify-content: center; font-size: 9pt; line-height: 1.4; }
+  .side .t { font-weight: 700; color: var(--navy); font-size: 10.5pt; }
+  .side code { font-size: 8pt; }
+  .legend { font-size: 8.5pt; color: var(--muted); margin-top: 4pt; }
+
+  /* ---------- Diyagram 2: akış ---------- */
+  .flow { position: relative; margin: 6pt 0 10pt; padding-left: 4pt; break-inside: avoid; }
+  .flow::before { content: ""; position: absolute; left: 15pt; top: 10pt; bottom: 10pt; width: 2px; background: var(--line); }
+  .step { position: relative; display: grid; grid-template-columns: 24pt 140pt 1fr; gap: 8pt; align-items: start; padding: 3.5pt 0; }
+  .step .dot { width: 22pt; height: 22pt; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 700; font-size: 9.5pt;
+               display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; }
+  .step.edge .dot { background: var(--teal); }
+  .step .where { font-weight: 700; color: var(--navy); font-size: 9.5pt; padding-top: 3pt; line-height: 1.3; }
+  .step .where small { display: block; font-weight: 400; color: var(--muted); font-size: 8pt; }
+  .step .what { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4pt 8pt; font-size: 9.2pt; line-height: 1.4; }
+  .step .what code { background: #fff; }
+  .states { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8pt; margin: 4pt 0 6pt; break-inside: avoid; }
+  .state { border: 1px solid var(--line); border-radius: 6px; padding: 6pt 9pt; font-size: 9pt; line-height: 1.4; }
+  .state code { display: inline-block; font-weight: 700; margin-bottom: 2pt; }
+
+  /* ---------- Diyagram 3: arayüzler ---------- */
+  .hub-title { font-weight: 700; color: var(--navy); font-size: 10pt; margin: 10pt 0 4pt; break-after: avoid; }
+  .hub { display: grid; grid-template-columns: 1fr 104pt 1fr; grid-template-rows: auto auto; gap: 10pt 12pt; margin: 4pt 0 10pt; break-inside: avoid; align-items: center; }
+  .hub .center { grid-column: 2; grid-row: 1 / span 2; background: var(--navy); color: #fff; border-radius: 10px; padding: 14pt 8pt; text-align: center; font-weight: 700; font-size: 11pt; align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+  .hub .center small { display: block; font-weight: 400; color: #C7D2E0; font-size: 8pt; margin-top: 4pt; line-height: 1.35; }
+  .iface { border: 1px solid var(--line); border-radius: 8px; padding: 7pt 10pt; background: #fff; font-size: 9pt; line-height: 1.4; }
+  .iface .t { font-weight: 700; color: var(--navy); font-size: 10pt; }
+  .iface .t code { font-weight: 400; font-size: 8pt; color: var(--muted); background: none; border: 0; padding: 0; margin-left: 4pt; }
+  .iface .row { display: flex; gap: 6pt; margin-top: 3pt; align-items: baseline; }
+  .iface .k { flex: 0 0 38pt; font-size: 7.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: .5pt; }
+  .iface .k.now { color: var(--muted); } .iface .k.next { color: var(--teal); }
+  .hub .l1 { grid-column: 1; grid-row: 1; } .hub .l2 { grid-column: 1; grid-row: 2; }
+  .hub .r1 { grid-column: 3; grid-row: 1; } .hub .r2 { grid-column: 3; grid-row: 2; }
+
+  /* ---------- Şekiller ---------- */
+  figure { margin: 6pt 0 12pt; break-inside: avoid; }
+  /* Şekil 2–12: iki sütunlu akış (okuma sırası: sol sütun, sonra sağ sütun). */
+  .figs { columns: 2; column-gap: 8mm; orphans: 1; widows: 1; }
+  .figs figure { margin: 0 0 10pt; display: block; break-inside: avoid; }
+  .figs figure img { width: 100%; max-height: none; }
+  .figs figcaption { font-size: 8.6pt; margin-top: 4pt; }
+  figure img { display: block; margin: 0 auto; max-width: 100%; max-height: 165mm; object-fit: contain;
+               border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 1px 4px rgba(15,42,74,.12); }
+  figcaption { text-align: left; font-size: 9pt; line-height: 1.45; color: var(--text); margin-top: 6pt; }
+  figcaption b { color: var(--navy); }
+  .fig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12pt; break-inside: avoid; }
+  .fig-row figure { margin-bottom: 10pt; }
+
+  .glossary td:first-child { width: 120pt; font-weight: 600; color: var(--navy); }
+  table.glossary { font-size: 8.8pt; }
+  table.glossary td { padding: 2.4pt 7pt; }
+</style>
+</head>
+<body>
+
+<!-- ======================= KAPAK ======================= -->
+<section class="cover">
+  <div class="strip"></div>
+  <div class="strip2"></div>
+  <div class="kicker">Aerospace Compliance Platform</div>
+  <h1>API İskeleti (Swagger)</h1>
+  <div class="subtitle">Aerospace Compliance Platform · Mobil Uygulama Arka Ucu</div>
+  <div class="meta">
+    <div><span class="label">Hazırlayan</span><strong>Kağan Bayrak</strong> — API iskeleti sorumlusu</div>
+    <div><span class="label">Ders</span>Mobil Uygulamalar · Ekip projesi</div>
+    <div><span class="label">Tarih</span>27 Ekim 2026</div>
+  </div>
+  <div class="cards four">
+    <div class="card"><div class="num">20</div><div class="lbl">endpoint</div></div>
+    <div class="card"><div class="num">5</div><div class="lbl">grup</div></div>
+    <div class="card"><div class="num"><em>652</em></div><div class="lbl">otomatik test</div></div>
+    <div class="card"><div class="num">4</div><div class="lbl">ekip arkadaşı için hazır takma noktası</div></div>
+  </div>
+  <p class="summary">Mobil uygulamamızın sunucuyla iletişim kuracağı 20 endpoint'lik API'yi kurdum ve Swagger ile belgeledim. Şu an sahte verilerle
+  uçtan uca çalışıyor; ekip arkadaşlarım kendi parçalarını hazır bıraktığım yerlere takarak gerçeğe çevirecek.</p>
+  <div class="toc">
+    <h3>İçindekiler</h3>
+    <ol>
+      <li>Ne yaptım?</li>
+      <li>Proje ve problem</li>
+      <li>Kullanılan teknolojiler</li>
+      <li>Sistem nasıl çalışıyor?</li>
+      <li>API uç noktaları</li>
+      <li>Takma noktaları</li>
+      <li>Ortak kurallar</li>
+      <li>Swagger ile test</li>
+      <li>Kalite ve testler</li>
+      <li>Mobil ekip için bağlanma ve sonraki adımlar</li>
+      <li class="extra">Küçük sözlük</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ======================= 1 ======================= -->
+<h2><span class="n">01</span>Ne yaptım?</h2>
+<p>Ekibimiz havacılık standartları üzerine çalışan bir mobil uygulama geliştiriyor. Mobil uygulamanın ekranları kendi
+başına bilgi üretemez; verileri bir <strong>sunucudan</strong> ister. Sunucunun dışarıya sunduğu, hangi isteğe hangi cevabı
+vereceği önceden tanımlanmış istek noktalarının tamamına <strong>API</strong> (Application Programming Interface) denir.</p>
+<p>Benim görevim bu API'nin <strong>iskeletini</strong> kurmaktı:</p>
+<ul>
+  <li><strong>20 endpoint</strong> (yöntem + adres çifti) tasarladım ve çalışır hale getirdim: standartlar, arama, sohbet, raporlar, giriş.</li>
+  <li>Her endpoint'in ne istediğini ve ne döndürdüğünü <strong>Swagger</strong> sayfasında otomatik belgeledim. Mobil ekip bu sayfayı
+  kullanım kılavuzu olarak okuyor ve tarayıcıdan deneyebiliyor.</li>
+  <li>Veritabanı, akıllı arama ve yapay zekâ henüz hazır olmadığı için bunların yerine <strong>sahte (mock)</strong> parçalar koydum.
+  Böylece uygulama bugünden uçtan uca çalışıyor.</li>
+  <li>Ekip arkadaşlarımın parçalarını takacağı yerleri <strong>tek bir noktada</strong> topladım ve kodda isimleriyle işaretledim.</li>
+</ul>
+<div class="box teal"><span class="tag">Özetle</span>
+<p>İskelet, API'nin tüm sözleşmesini (adresler, istek/cevap formatları, hata kuralları) bugünden
+sabitler. Gerçek bileşenler hazır oldukça mock'ların yerini alır; mobil uygulamanın gördüğü format değişmez.</p></div>
+
+<!-- ======================= 2 ======================= -->
+<h2><span class="n">02</span>Proje ve problem</h2>
+<p><strong>Problem.</strong> Havacılık ve savunmada bir ürün (telsiz, radar, uçuş yazılımı) teslim edilmeden önce standartlara
+uyduğunu kanıtlamak zorundadır. Bu standartlar çok büyüktür (MIL-STD-810H yaklaşık 1000 sayfa), İngilizcedir ve
+birbirine atıf yapar. Gözden kaçan tek bir madde test tekrarına, gecikmeye ya da sertifika reddine yol açabilir.</p>
+<h4>Platformun iki işi</h4>
+<table>
+  <thead><tr><th>Özellik</th><th>Kullanıcı ne yapar?</th><th>Sistem ne döndürür?</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Standart asistanı</strong></td><td>Doğal dille soru sorar: "Vibrasyon testi kaç saat sürmeli?"</td><td>Türkçe cevap + <strong>kaynak</strong> (standart, madde, sayfa)</td></tr>
+    <tr><td><strong>Uyumluluk ön kontrolü</strong></td><td>Kendi test raporunu yükler</td><td>Karar (Uyumlu / Kısmen Uyumlu / Uyumsuz / Yetersiz Bilgi), gerekçe, güven skoru</td></tr>
+  </tbody>
+</table>
+<h4>Projedeki standartlar</h4>
+<table>
+  <thead><tr><th style="width:110pt">Kod</th><th>Konusu</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">MIL-STD-810H</td><td>Çevresel testler: sıcaklık, nem, titreşim, şok</td></tr>
+    <tr><td class="mono">MIL-STD-461G</td><td>Elektromanyetik uyumluluk (cihazların birbirini bozmaması)</td></tr>
+    <tr><td class="mono">DO-178C</td><td>Uçuş yazılımı sertifikasyonu</td></tr>
+  </tbody>
+</table>
+<p><strong>RAG nedir?</strong> Cevaplar RAG (Retrieval-Augmented Generation, "bulup okuyarak cevap üretme") ile
+üretilir. Sistem önce soruyla ilgili standart parçalarını <strong>bulur</strong>, sonra yapay zekâya "sadece bu parçalara dayanarak
+cevap ver ve kaynak göster" der. Model genel bilgisinden değil, bulunan parçalardan cevap ürettiği için her cevapta
+kaynak (standart, madde, sayfa) gösterilebilir.</p>
+<div class="box amber"><span class="tag">Sınır</span>
+<p>Platform bir asistandır, resmi onay mercii değildir. Kaynak gösterimi bu yüzden zorunludur.</p></div>
+
+<!-- ======================= 3 ======================= -->
+<h2><span class="n">03</span>Kullanılan teknolojiler</h2>
+<table>
+  <thead><tr><th style="width:130pt">Teknoloji</th><th>Ne işe yarıyor?</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Python 3.14</strong></td><td>Projenin programlama dili</td></tr>
+    <tr><td><strong>FastAPI 0.162</strong></td><td>API'yi yazdığımız çatı (framework). Endpoint'leri tanımlar, gelen isteği doğrular, Swagger'ı otomatik üretir</td></tr>
+    <tr><td><strong>Pydantic 2.14</strong></td><td>İstek ve cevapların <strong>şablonunu</strong> (şema) tanımlar; hatalı veriyi servise ulaşmadan reddeder</td></tr>
+    <tr><td><strong>Swagger / OpenAPI</strong></td><td>API'nin otomatik, tıklanabilir kullanım kılavuzu (<code>/docs</code>). Mobil ekibin ana dokümanı</td></tr>
+    <tr><td><strong>Uvicorn 0.54</strong></td><td>API'yi çalıştıran sunucu programı</td></tr>
+    <tr><td><strong>pydantic-settings 2.16</strong></td><td>Ayarları (<code>.env</code>) güvenli ve tek yerden okur</td></tr>
+    <tr><td><strong>python-multipart</strong></td><td>PDF yüklemeyi (dosya gönderimini) mümkün kılar</td></tr>
+    <tr><td><strong>Loguru 0.7</strong></td><td>Sunucu günlüğü (log): ne oldu, ne zaman oldu</td></tr>
+    <tr><td><strong>pytest 9.1 + httpx</strong></td><td>Otomatik testler: 652 test her değişiklikte tek komutla çalışır</td></tr>
+    <tr><td><strong>Playwright 1.64</strong></td><td>Bu rapordaki Swagger ekran görüntülerini ve PDF'i otomatik üretir</td></tr>
+  </tbody>
+</table>
+<p><strong>Bu hafta bilerek olmayanlar:</strong> Veritabanı (Doruk), vektör arama (Sudenur), Gemini yapay zekâsı. Hepsinin yerinde
+şimdilik bellek-içi sahte bir parça çalışıyor.</p>
+
+<!-- ======================= 4 ======================= -->
+<h2><span class="n">04</span>Sistem nasıl çalışıyor?</h2>
+<h3><span class="n">4.1</span>Katmanlar</h3>
+<p>Kod dört katmana ayrıldı (Clean Architecture). Her katmanın tek bir sorumluluğu var ve bağımlılık hep <strong>içe</strong> doğru.</p>
+
+<div class="layers">
+  <div class="stack">
+    <div class="layer"><div class="name">API<code>src/api/</code></div>
+      <div class="desc">İsteği alır, şemaya göre kontrol eder, servisi çağırır, cevabı döner. İş mantığı yoktur.</div></div>
+    <div class="arrow"><b>↓</b>bağımlı</div>
+    <div class="layer"><div class="name">Application<code>src/application/</code></div>
+      <div class="desc">İş kuralları ("aynı standart iki kez eklenemez", "başkasının raporu görünmez") ve istek/cevap şemaları.</div></div>
+    <div class="arrow"><b>↓</b>bağımlı</div>
+    <div class="layer core-domain"><div class="name">Domain<code>src/domain/</code></div>
+      <div class="desc">Temel kavramlar (Standart, Rapor, Sohbet) ve <strong>arayüzler</strong>. Hiçbir dış kütüphaneye bağlı değildir.</div></div>
+    <div class="arrow"><b>↑</b>arayüzleri uygular</div>
+    <div class="layer"><div class="name">Infrastructure<code>src/infrastructure/</code></div>
+      <div class="desc">Arayüzlerin implementasyonları: bugün bellek-içi depo, mock arama, mock yapay zekâ, PDF deposu; ileride gerçekleri.</div></div>
+  </div>
+  <div class="side">
+    <div class="t">Core</div>
+    <code>src/core/</code>
+    <p style="margin:6pt 0 0">Ayarlar, tek tip hata yönetimi, bileşen seçim dosyası <code>deps.py</code>.</p>
+  </div>
+</div>
+
+<div class="box teal"><span class="tag">Neden katmanlı?</span>
+<p>Her katman yalnızca bir alttakinin arayüzünü bilir. Bu sayede bir implementasyon
+(ör. mock arama yerine hibrit arama) değiştiğinde iş kuralları ve API katmanı etkilenmez; her katman ayrı test edilebilir.</p></div>
+
+<h3><span class="n">4.2</span>Bir sorunun yolculuğu</h3>
+<p style="break-after: avoid">Mobil uygulamada "Vibrasyon testi kaç saat sürmeli?" yazıldığında:</p>
+<div class="flow">
+  <div class="step edge"><div class="dot">1</div><div class="where">Mobil</div>
+    <div class="what"><code>POST /api/v1/chat/ask</code> isteği gönderilir: <code>{"question": "Vibrasyon testi kaç saat sürmeli?"}</code></div></div>
+  <div class="step"><div class="dot">2</div><div class="where">API (router)</div>
+    <div class="what">Şema kontrolü: soru 3–2000 karakter mi? Değilse hemen <code>422</code> döner, servise hiç gidilmez</div></div>
+  <div class="step"><div class="dot">3</div><div class="where">Servis</div>
+    <div class="what">Sohbet bulunur ya da yenisi açılır</div></div>
+  <div class="step"><div class="dot">4</div><div class="where">Arama<small>bugün mock, yarın Sudenur</small></div>
+    <div class="what">Soruyla ilgili standart parçaları bulunur: MIL-STD-810H · Method 514.8 · Sayfa 412</div></div>
+  <div class="step"><div class="dot">5</div><div class="where">Yapay zekâ<small>bugün mock, yarın Gemini</small></div>
+    <div class="what">Parçalara dayanarak cevap yazılır. Mock cevaplar <code>[DEMO]</code> ile başlar</div></div>
+  <div class="step"><div class="dot">6</div><div class="where">Depo<small>bugün bellek, yarın Doruk'un PostgreSQL'i</small></div>
+    <div class="what">Soru, cevap ve kaynaklar sohbet geçmişine kaydedilir</div></div>
+  <div class="step edge"><div class="dot">7</div><div class="where">Mobil</div>
+    <div class="what">Cevap + kaynak listesi + durum (<code>ANSWERED</code>) gelir</div></div>
+</div>
+<p>Üç olası durum (hepsi <code>200</code>, mobil <code>status</code> alanına bakar):</p>
+<div class="states">
+  <div class="state" style="border-top:3px solid var(--get)"><code>ANSWERED</code><br>cevap ve kaynaklar var.</div>
+  <div class="state" style="border-top:3px solid var(--muted)"><code>NO_RESULTS</code><br>ilgili parça bulunamadı; <code>answer</code> boş (<code>null</code>), yapay zekâ hiç çağrılmaz.</div>
+  <div class="state" style="border-top:3px solid var(--amber)"><code>LLM_UNAVAILABLE</code><br>kaynaklar bulundu ama yapay zekâ cevap üretemedi; mobil "kaynaklar bulundu, cevap üretilemedi" gösterir.</div>
+</div>
+
+<!-- ======================= 5 ======================= -->
+<h2><span class="n">05</span>API uç noktaları (20)</h2>
+<p>Swagger'da 5 grup altında. Kilit simgeli uçlar giriş ister (bu hafta otomatik demo kullanıcı ile açık).</p>
+
+<table class="ep">
+  <thead><tr><th>Yöntem</th><th>Adres</th><th>Görevi</th></tr></thead>
+  <tbody>
+    <tr class="grp"><td colspan="3">System</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/</code></td><td>Uygulama bilgisi (ad, sürüm, doküman adresi)</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/health</code></td><td>Sağlık kontrolü: sunucu ayakta mı, hangi arama/yapay zekâ takılı</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/api/v1/meta/enums</code></td><td>Açılır listeler için seçenekler ve sınırlar (ör. "Kısmen Uyumlu" etiketi)</td></tr>
+  
+    <tr class="grp"><td colspan="3">Auth <small>(Taha'nın modülünün şu anki şekli)</small></td></tr>
+    <tr><td><span class="m post">POST</span></td><td><code>/auth/register</code></td><td>Kayıt ol</td></tr>
+    <tr><td><span class="m post">POST</span></td><td><code>/auth/login</code></td><td>Giriş yap, token al</td></tr>
+    <tr><td><span class="m post">POST</span></td><td><code>/auth/refresh</code></td><td>Süresi dolan token'ı yenile</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/auth/me</code></td><td>Giriş yapmış kullanıcının bilgisi</td></tr>
+  
+    <tr class="grp"><td colspan="3">Standards</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/api/v1/standards</code></td><td>Standartları listele (arama, filtre, sayfalama)</td></tr>
+    <tr><td><span class="m post">POST</span></td><td><code>/api/v1/standards</code></td><td>Yeni standart ekle (yönetici)</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/api/v1/standards/{standard_id}</code></td><td>Standart detayı</td></tr>
+    <tr><td><span class="m post">POST</span></td><td><code>/api/v1/standards/{standard_id}/document</code></td><td>Standardın PDF'ini yükle; arka planda indekslenir (yönetici)</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/api/v1/standards/{standard_id}/index-status</code></td><td>İndeksleme ne durumda? (<code>PENDING → PROCESSING → INDEXED</code>)</td></tr>
+  
+    <tr class="grp"><td colspan="3">Search &amp; Chat</td></tr>
+    <tr><td><span class="m post">POST</span></td><td><code>/api/v1/search</code></td><td>Standartlarda ara (yapay zekâsız ham sonuçlar)</td></tr>
+    <tr><td><span class="m post">POST</span></td><td><code>/api/v1/chat/ask</code></td><td>Soru sor, kaynaklı cevap al</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/api/v1/chat/conversations</code></td><td>Sohbetlerim</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/api/v1/chat/conversations/{conversation_id}</code></td><td>Bir sohbetin tüm mesajları</td></tr>
+  
+    <tr class="grp"><td colspan="3">Reports</td></tr>
+    <tr><td><span class="m post">POST</span></td><td><code>/api/v1/reports</code></td><td>Rapor (PDF) yükle; arka planda işlenir</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/api/v1/reports</code></td><td>Raporlarım</td></tr>
+    <tr><td><span class="m get">GET</span></td><td><code>/api/v1/reports/{report_id}</code></td><td>Rapor detayı ve durumu (<code>UPLOADED → PROCESSING → READY</code>)</td></tr>
+    <tr><td><span class="m post">POST</span></td><td><code>/api/v1/reports/{report_id}/analyses</code></td><td>Raporu standarda göre uyumluluk analizinden geçir</td></tr>
+  
+  </tbody>
+</table>
+
+<div class="box amber"><span class="tag">Auth notu</span>
+<p>Auth uçları Taha'nın modülünün şu anki halini gösterir (<code>/auth/*</code>). Birleştirmede tek satırla
+<code>/api/v1/auth/*</code> altına alınacak ve cevaba kullanıcı rolü eklenecek; mobil için kırıcı bir değişiklik değildir.</p></div>
+
+<!-- ======================= 6 ======================= -->
+<h2><span class="n">06</span>Takma noktaları: arkadaşlarım nereye bağlanıyor?</h2>
+<p>Her dış bileşen bir <strong>arayüzün</strong> (interface) arkasında. Hangi parçanın takılı olduğu tek bir dosyada seçiliyor:
+<code>src/core/deps.py</code>. Kodda her kişinin yeri <code>TODO(İsim)</code> ile işaretli.</p>
+<table>
+  <thead><tr><th style="width:62pt">Kişi</th><th style="width:96pt">Görevi</th><th>İskeletteki yeri</th><th>Bugün takılı olan</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Taha</strong></td><td>Kayıt/giriş, JWT</td><td><code>src/core/security.py</code>, <code>auth_service.py</code>, <code>get_current_user</code></td><td>Sahte token, demo kullanıcı</td></tr>
+    <tr><td><strong>Doruk</strong></td><td>PostgreSQL veritabanı</td><td>Depo arayüzleri (<code>src/domain/interfaces.py</code>)</td><td>Bellek-içi depolar + örnek veri</td></tr>
+    <tr><td><strong>Sudenur</strong></td><td>Madde bazlı parçalama, hibrit arama</td><td><code>SearchService</code> arayüzü</td><td><code>mock_search.py</code> (sabit parça kataloğu)</td></tr>
+    <tr><td><strong>Onur</strong></td><td>Standart PDF'leri, web sohbet</td><td><code>POST .../document</code>, <code>POST /chat/ask</code>, PDF deposu</td><td>Yerel PDF deposu</td></tr>
+    <tr><td><strong>Şeyma, Ammar</strong></td><td>Mobil ekranlar</td><td>Swagger + sözleşme (<code>docs/API_CONTRACT.md</code>)</td><td>Tüm ekranlar sahte veriyle çalışıyor</td></tr>
+    <tr><td><strong>(Gemini)</strong></td><td>Yapay zekâ cevabı ve analiz</td><td><code>LLMClient</code> arayüzü</td><td><code>mock_llm.py</code> (<code>[DEMO]</code> cevaplar)</td></tr>
+  </tbody>
+</table>
+
+<div class="hub-title">Arayüzler ve hedef implementasyonlar</div>
+<div class="hub">
+  <div class="iface l1"><div class="t">Depo<code>Repository arayüzleri</code></div>
+    <div class="row"><span class="k now">Bugün</span><span>mock: bellek-içi depolar + örnek veri</span></div>
+    <div class="row"><span class="k next">Hedef →</span><span>PostgreSQL (Doruk)</span></div></div>
+  <div class="iface l2"><div class="t">Arama<code>SearchService</code></div>
+    <div class="row"><span class="k now">Bugün</span><span>mock: <code>mock_search.py</code></span></div>
+    <div class="row"><span class="k next">Hedef →</span><span>Hibrit arama (Sudenur)</span></div></div>
+  <div class="center">Servisler<small>sadece arayüzleri bilir;<br>seçim: <span class="mono" style="font-size:8pt">deps.py</span></small></div>
+  <div class="iface r1"><div class="t">Yapay zekâ<code>LLMClient</code></div>
+    <div class="row"><span class="k now">Bugün</span><span>mock: <code>mock_llm.py</code> (<code>[DEMO]</code>)</span></div>
+    <div class="row"><span class="k next">Hedef →</span><span>Gemini</span></div></div>
+  <div class="iface r2"><div class="t">Dosya deposu<code>FileStorage</code></div>
+    <div class="row"><span class="k now">Bugün</span><span>yerel PDF deposu (<code>local_storage.py</code>)</span></div>
+    <div class="row"><span class="k next">Hedef →</span><span>PDF metin çıkarma (Onur); ileride bulut depolama</span></div></div>
+</div>
+
+<p><strong>Neden önemli?</strong> Sudenur gerçek aramasını yazınca sadece <code>deps.py</code>'de mock yerine kendi sınıfını seçecek.
+Router'lara, servislere ve mobil uygulamaya <strong>dokunulmayacak</strong>. Herkes birbirini beklemeden paralel çalışabiliyor.</p>
+
+<!-- ======================= 7 ======================= -->
+<h2><span class="n">07</span>Ortak kurallar</h2>
+<h3><span class="n">7.1</span><code>/api/v1</code> — neden sürüm numarası?</h3>
+<p><code>api</code> bu adreslerin veri servisi olduğunu belirtir (dokümantasyon ve diğer sayfalardan ayırır). <code>v1</code> sürümdür: telefonlardaki uygulamalar zorla güncellenemez.
+Formatı değiştirmemiz gerekirse <code>v2</code> açarız; eski uygulamalar <code>v1</code> ile çalışmaya devam eder.</p>
+
+<h3><span class="n">7.2</span>Tek tip hata formatı</h3>
+<p>Ne ters giderse gitsin cevap aynı biçimdedir:</p>
+<pre class="code">{ "error": { "code": "NOT_FOUND", "message": "Standart bulunamadı: id=7", "details": null } }</pre>
+<ul>
+  <li><code>code</code> program içindir (mobil buna göre karar verir), <code>message</code> kullanıcı için Türkçedir.</li>
+  <li>Sunucu hatasında (500) iç ayrıntı (stack trace) kullanıcıya <strong>gönderilmez</strong>, sadece günlüğe yazılır.</li>
+</ul>
+<table>
+  <thead><tr><th>Kod</th><th class="c" style="width:62pt">HTTP</th><th>Ne zaman?</th></tr></thead>
+  <tbody>
+    <tr><td><code>VALIDATION_ERROR</code></td><td class="c">422</td><td>Eksik/yanlış alan (ör. soru 3 karakterden kısa)</td></tr>
+    <tr><td><code>UNAUTHORIZED</code> / <code>FORBIDDEN</code></td><td class="c">401 / 403</td><td>Giriş yok / yetki yok</td></tr>
+    <tr><td><code>NOT_FOUND</code></td><td class="c">404</td><td>Kayıt yok (veya başkasına ait)</td></tr>
+    <tr><td><code>CONFLICT</code></td><td class="c">409</td><td>Aynı standart kodu zaten var; rapor analize hazır değil</td></tr>
+    <tr><td><code>PAYLOAD_TOO_LARGE</code> / <code>UNSUPPORTED_FILE</code></td><td class="c">413 / 415</td><td>Dosya çok büyük / PDF değil</td></tr>
+    <tr><td><code>LLM_UNAVAILABLE</code></td><td class="c">503</td><td>Yapay zekâ şu an cevap veremiyor</td></tr>
+  </tbody>
+</table>
+
+<h3><span class="n">7.3</span>Sayfalama</h3>
+<p>Listeler parça parça gelir: <code>?page=1&amp;page_size=20</code> → <code>{items, total, page, page_size}</code>. En fazla 100.
+Mobil cihaz tüm kayıtları tek seferde indirmez; veri kullanımı ve bekleme süresi düşük kalır.</p>
+
+<h3><span class="n">7.4</span>Uzun işler: 202 + durum sorgulama</h3>
+<p>PDF yükleyince sunucu hemen <code>202 Accepted</code> ("aldım") der ve işi arka planda yapar. Mobil iki saniyede bir durum
+adresini sorar, <code>INDEXED</code> / <code>READY</code> / <code>FAILED</code> olunca durur. Böylece büyük bir PDF işlenirken istek zaman aşımına
+uğramaz ve mobil arayüz donmaz.</p>
+
+<h3><span class="n">7.5</span>Güvenlik önlemleri</h3>
+<ul>
+  <li>Yüklenen dosyanın adı diske kullanılmaz; rastgele bir ad verilir (<code>uuid.pdf</code>). Böylece <code>../</code> gibi hilelerle başka klasöre yazılamaz.</li>
+  <li>Dosyanın gerçekten PDF olduğu ilk baytlarından (<code>%PDF</code>) kontrol edilir; boyut sınırı 50 MB.</li>
+  <li>Başkasının raporu veya sohbeti istenirse <code>404</code> döner (403 değil): "yasak" demek kaydın var olduğunu ele verirdi.</li>
+  <li>Önce kontrol, sonra yazma: standart yoksa ya da dosya hatalıysa diske hiçbir şey yazılmaz.</li>
+  <li>Gizli ayarlar <code>.env</code> dosyasında durur ve projeye eklenmez; örnek ayarlar <code>.env.example</code>'da.</li>
+</ul>
+
+<!-- ======================= 8 ======================= -->
+<section>
+<h2><span class="n">08</span>Swagger ile test</h2>
+<p>Aşağıdaki ekran görüntüleri, ayrı bir test portunda çalıştırılan sunucunun Swagger sayfasından (<code>/docs</code>)
+<code>tools/screenshots.py</code> ile otomatik alındı. Her biri "Try it out → Execute" ile gerçek bir istek ve gerçek cevaptır;
+okunurluk için görüntülerde yalnızca istek, durum kodu ve JSON cevap bırakıldı.</p>
+
+<div class="figs">
+<figure><img src="img/01_swagger_genel.png" alt="Swagger ana sayfası">
+<figcaption><b>Şekil 1 – Swagger ana sayfası.</b> 20 endpoint beş grup altında. Sağ üstteki
+"Authorize" butonu Taha'nın token'ı için hazır; bu hafta giriş kapalı, demo kullanıcıyla çalışılıyor.</figcaption></figure>
+
+<figure><img src="img/02_health.png" alt="Sağlık kontrolü">
+<figcaption><b>Şekil 2 – Sağlık kontrolü.</b> Mobil açılışta sunucunun ayakta olduğunu buradan anlar.
+<code>search: "mock"</code> ve <code>llm: "mock"</code> hangi parçaların takılı olduğunu gösterir.</figcaption></figure>
+
+<figure><img src="img/03_standart_liste.png" alt="Standartları listeleme">
+<figcaption><b>Şekil 3 – Standartları listeleme.</b> Cevap sayfalı gelir: <code>items</code> kayıtlar, <code>total</code>
+toplam sayı. Uygulama örnek standartlarla dolu başlar.</figcaption></figure>
+
+<figure><img src="img/04_standart_ekle_201.png" alt="Yeni standart ekleme">
+<figcaption><b>Şekil 4 – Yeni standart ekleme (201 Created).</b> RTCA-DO-160G eklendi; sistem
+ona bir numara (id) ve durum alanları verdi. Henüz PDF'i olmadığı için <code>NOT_INDEXED</code>.</figcaption></figure>
+
+<figure><img src="img/05_hata_409.png" alt="Aynı kodla tekrar ekleme">
+<figcaption><b>Şekil 5 – Aynı kodla tekrar ekleme (409 Conflict).</b> Kod küçük harfle yazılsa da
+yakalanır. Hata, tek tip formatta ve Türkçe mesajla döner.</figcaption></figure>
+
+<figure><img src="img/06_pdf_yukle_202.png" alt="PDF yükleme">
+<figcaption><b>Şekil 6 – PDF yükleme (202 Accepted).</b> Sunucu dosyayı aldı ve hemen <code>PENDING</code>
+döndü; indeksleme arka planda yapılıyor, telefon beklemiyor.</figcaption></figure>
+
+<figure><img src="img/07_index_status.png" alt="İndeksleme durumu">
+<figcaption><b>Şekil 7 – İndeksleme durumu.</b> Birkaç saniye sonra durum <code>INDEXED</code>; sayfa ve parça
+sayıları doldu. Mobil bu adresi <code>INDEXED</code> olana kadar yoklar.</figcaption></figure>
+
+<figure><img src="img/08_chat_ask.png" alt="Kaynaklı soru-cevap">
+<figcaption><b>Şekil 8 – Kaynaklı soru-cevap.</b> Cevap <code>[DEMO]</code> ile başlıyor (sahte yapay zekâ) ve
+MIL-STD-810H · Method 514.8 · Sayfa 412 kaynağını gösteriyor. Gerçek arama ve Gemini takılınca biçim aynı kalacak.</figcaption></figure>
+
+<figure><img src="img/09_rapor_analiz_201.png" alt="Uyumluluk analizi">
+<figcaption><b>Şekil 9 – Uyumluluk analizi (201 Created).</b> Hazır örnek rapor analiz edildi:
+karar, Türkçe etiketi, güven skoru ve gerekçe döndü. Sahte modda karar bilerek "Yetersiz Bilgi".</figcaption></figure>
+
+<figure><img src="img/10_hata_422.png" alt="Hatalı istek">
+<figcaption><b>Şekil 10 – Hatalı istek (422).</b> Soru 3 karakterden kısa olduğu için istek servise hiç
+ulaşmadan reddedildi; <code>details</code> hangi alanın (<code>body.question</code>) neden hatalı olduğunu söylüyor. Üst mesaj
+Türkçedir; alan açıklaması doğrulama kütüphanesinden İngilizce gelir (mobil kullanıcıya <code>message</code> gösterilir).</figcaption></figure>
+
+<figure><img src="img/11_sohbet_gecmisi.png" alt="Sohbet geçmişi">
+<figcaption><b>Şekil 11 – Sohbet geçmişi.</b> Şekil 8'deki soru otomatik olarak yeni bir sohbet
+açtı; başlık sorunun ilk cümlesinden geliyor.</figcaption></figure>
+
+<figure><img src="img/12_auth_login.png" alt="Giriş">
+<figcaption><b>Şekil 12 – Giriş (stub).</b> Demo hesapla giriş yapılıp token alındı. Token şimdilik
+sahte; gerçek JWT'yi Taha bağlayacak, cevabın biçimi değişmeyecek.</figcaption></figure>
+</div>
+</section>
+
+<!-- ======================= 9 ======================= -->
+<h2><span class="n">09</span>Kalite ve testler</h2>
+<div class="cards three">
+  <div class="card"><div class="num"><em>652</em></div><div class="lbl">test geçti</div></div>
+  <div class="card"><div class="num">0</div><div class="lbl">hata</div></div>
+  <div class="card"><div class="num">20/20</div><div class="lbl">endpoint sözleşmeyle birebir</div></div>
+</div>
+<ul>
+  <li>652 testin yanında 3 test bilinçli olarak atlanır: üç küçük iç şemada örnek değer model düzeyinde değil alan
+  düzeyinde tanımlıdır ve bu örnekler başka bir testte ayrıca doğrulanır.</li>
+  <li><strong>Sözleşme önce:</strong> Tüm formatlar önce <code>docs/API_CONTRACT.md</code> dosyasına yazıldı, kod ona göre yapıldı. Mobil ekip
+  ile backend aynı belgeden çalışıyor.</li>
+  <li><strong>Sözleşme kapsama testi:</strong> Sözleşmedeki 20 endpoint'in kodda birebir var olduğunu (eksik ve fazla olmadığını)
+  otomatik kontrol ediyor.</li>
+  <li><strong>Her endpoint için</strong> hem doğru kullanım hem en az bir hata durumu test edildi; tüm hataların tek tip formatta
+  döndüğü ve tarihlerin UTC olduğu doğrulandı.</li>
+</ul>
+<h4>Testlerin yakaladığı ve düzeltilen hatalar (dürüst not)</h4>
+<table>
+  <thead><tr><th>Bulunan hata</th><th>Neden önemliydi?</th><th style="width:96pt">Durum</th></tr></thead>
+  <tbody>
+    <tr><td>Sadece boşluktan oluşan standart kodu (<code>"   "</code>) kabul ediliyordu</td><td>Katalogda adı boş bir kayıt oluşuyordu</td><td>Düzeltildi → 422</td></tr>
+    <tr><td>"TİTREŞİM" araması "Titreşim"i bulmuyordu</td><td>Türkçe İ/ı harfleri; mobil kullanıcı büyük harfle arayabilir</td><td>Düzeltildi</td></tr>
+    <tr><td>Sohbete var olmayan standart numarası yazılıyordu</td><td>Geçmişte tutarsız veri</td><td>Düzeltildi</td></tr>
+    <tr><td>Dosya yükleme kodu git'e eklenmiyordu (<code>.gitignore</code> kuralı)</td><td>Projeyi indiren uygulamayı çalıştıramazdı</td><td>Commit öncesi yakalandı</td></tr>
+  </tbody>
+</table>
+<p><strong>Eski projeden öğrendiklerimiz:</strong> Önceki sürümde analiz uç noktası her zaman hata (500) dönüyordu, hata
+durumları kayboluyordu, dosya adları doğrudan diske yazılıyordu. Yeni iskelette bunların her biri için bir kural
+ve test var.</p>
+
+<!-- ======================= 10 ======================= -->
+<h2><span class="n">10</span>Mobil ekip için bağlanma ve sonraki adımlar</h2>
+<h3><span class="n">10.1</span>Bağlanma</h3>
+<table>
+  <thead><tr><th style="width:190pt">Nereden?</th><th>Adres</th></tr></thead>
+  <tbody>
+    <tr><td>Sunucunun çalıştığı bilgisayar</td><td><code>http://localhost:8000/docs</code></td></tr>
+    <tr><td>Aynı Wi-Fi'daki başka bilgisayar / telefon</td><td><code>http://&lt;bilgisayarın IP'si&gt;:8000</code> (ör. <code>192.168.1.100</code>; <code>ipconfig</code> ile bulunur)</td></tr>
+    <tr><td>Android emülatör (aynı bilgisayarda)</td><td><code>http://10.0.2.2:8000</code></td></tr>
+  </tbody>
+</table>
+<p>Sunucuyu başlatma:</p>
+<pre class="code">.venv\Scripts\python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000</pre>
+<p>(<code>--host 0.0.0.0</code> başka cihazların bağlanabilmesi için; Windows güvenlik duvarında "Özel ağ" izni verilmeli.)</p>
+
+<h3><span class="n">10.2</span>Bilinmesi gerekenler</h3>
+<ul>
+  <li>Veriler bellekte tutulur: sunucu yeniden başlayınca başlangıç verisine döner (3 standart, 1 örnek rapor).</li>
+  <li>Giriş bu hafta kapalı; herkes aynı demo kullanıcıdır. Giriş denemek için: <code>demo@aerospace.local</code> / <code>demo12345</code>.</li>
+  <li>Açılır listelerdeki seçenekler uygulamaya gömülmemeli, <code>GET /api/v1/meta/enums</code>'tan alınmalı.</li>
+  <li>Yükleme sonrası iki saniyede bir durum sorgulanmalı (Bölüm 7.4).</li>
+  <li><code>/openapi.json</code> dosyasından mobil için istemci kodu otomatik üretilebilir.</li>
+</ul>
+
+<h3><span class="n">10.3</span>Sonraki adımlar</h3>
+<table>
+  <thead><tr><th class="c" style="width:36pt">Sıra</th><th style="width:90pt">Kim</th><th>Ne</th></tr></thead>
+  <tbody>
+    <tr><td class="c">1</td><td><strong>Taha</strong></td><td>Gerçek JWT; auth uçlarını <code>/api/v1/auth</code> altına alma</td></tr>
+    <tr><td class="c">2</td><td><strong>Doruk</strong></td><td>Bellek-içi depolar yerine PostgreSQL</td></tr>
+    <tr><td class="c">3</td><td><strong>Sudenur</strong></td><td>Madde bazlı parçalama ve hibrit arama (<code>SearchService</code>)</td></tr>
+    <tr><td class="c">4</td><td><strong>Onur</strong></td><td>Gerçek standart PDF'leri, web sohbet ekranının <code>/chat/ask</code>'e bağlanması</td></tr>
+    <tr><td class="c">5</td><td><strong>Şeyma, Ammar</strong></td><td>Giriş/kayıt ve sohbet ekranlarının Swagger'daki formatla bağlanması</td></tr>
+    <tr><td class="c">6</td><td><strong>Kağan</strong></td><td>Kalan 12 endpoint (güncelleme, silme, PDF görüntüleme, analiz geçmişi)</td></tr>
+  </tbody>
+</table>
+
+<!-- ======================= Ek ======================= -->
+<section>
+<h2><span class="n">Ek</span>Küçük sözlük</h2>
+<table class="glossary">
+  <thead><tr><th>Terim</th><th>Bir cümlede</th></tr></thead>
+  <tbody>
+    <tr><td>API</td><td>Bir programın diğer programlara sunduğu tanımlı istek noktalarının tamamı</td></tr>
+    <tr><td>Endpoint</td><td>Tek bir istek noktası: yöntem + adres (ör. <code>GET /health</code>)</td></tr>
+    <tr><td>Swagger / OpenAPI</td><td>API'nin otomatik, tıklanabilir kullanım kılavuzu</td></tr>
+    <tr><td>Şema</td><td>Gelen/giden verinin şablonu (hangi alan, hangi tip, hangi sınır)</td></tr>
+    <tr><td>Mock</td><td>Gerçeğinin yerine geçici takılan sahte parça</td></tr>
+    <tr><td>Arayüz (interface)</td><td>Bir bileşenin sağlaması gereken metotların tanımı; implementasyonu değiştirilebilir</td></tr>
+    <tr><td>RAG</td><td>Önce ilgili belge parçalarını bulup sonra onlara dayanarak cevap üretme</td></tr>
+    <tr><td>Token / JWT</td><td>Girişten sonra sunucunun verdiği ve her istekte gönderilen imzalı kimlik bilgisi</td></tr>
+    <tr><td>HTTP durum kodu</td><td>Cevabın sonucu: 200 tamam, 201 oluşturuldu, 202 alındı, 404 yok, 422 hatalı istek</td></tr>
+  </tbody>
+</table>
+</section>
+
+</body>
+</html>
